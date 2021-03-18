@@ -4,7 +4,7 @@ from sys import exit
 
 #todo: clean up magic code, work on separating movement logic into the correct areas, start building stone class if needed, implement move check logic
 
-BACKGROUND = 'ramin.jpg'
+BACKGROUND = 'assets/ramin.jpg'
 BOARD_SIZE = (810, 810)
 
 def main():

@@ -1,3 +1,4 @@
+#not in use currently
 class Stone:
     def __init__(self, board, x, y, color):
         self.board = board

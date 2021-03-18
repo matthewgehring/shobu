@@ -1,8 +1,8 @@
 import pygame
 
-black = pygame.image.load("black.png")
+black = pygame.image.load("assets/black.png")
 black_stone = pygame.transform.scale(black, (50, 50))
-white = pygame.image.load("white.png")
+white = pygame.image.load("assets/white.png")
 white_stone = pygame.transform.scale(white, (50, 50))
 
 class Region:
