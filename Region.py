@@ -20,7 +20,7 @@ class Region:
                 #offset + side length * index, offset + side length * index, side length, side length originally 40
                 rect = pygame.Rect(45*self.x_offset + (60 * i), 45*self.y_offset + (60 * j), 60, 60)
                 self.map.append(rect)
-                pygame.draw.rect(self.background, (0, 0, 0), rect, 1)
+                pygame.draw.rect(self.background, (0, 0, 0), rect, 2)
     
     def set_up(self, screen):
         for square in self.map:
