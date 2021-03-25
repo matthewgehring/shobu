@@ -12,8 +12,15 @@ def main():
         pygame.display.update()
         pygame.time.wait(250)
         passive_stone = board.get_square()
+        print(passive_stone)
+        passive_stone_move = board.get_square()
+        print(passive_stone_move)
+        aggro_stone = board.get_square()
+        print(aggro_stone)
         if passive_stone != None:
-            print(passive_stone[0], passive_stone[1])
+            board.passive_aggressive(board.player, passive_stone[0], passive_stone_move[0], aggro_stone[0])
+            board.clear()
+            board.draw() #should be update here
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
