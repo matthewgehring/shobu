@@ -32,7 +32,6 @@ class Board:
         self.board = [self.region0.stones, self.region1.stones, self.region2.stones, self.region3.stones]
         for region in self.regions:
             region.draw()
-            print("hello")
             region.set_up(self.screen)
 
     def clear(self):
