@@ -3,6 +3,7 @@ from Board import Board
 from sys import exit
 
 #todo: clean up magic code, work on separating movement logic into the correct areas, start building stone class if needed, implement move check logic
+#TODO add board history
 
 BACKGROUND = 'assets/ramin.jpg'
 BOARD_SIZE = (810, 810)
@@ -12,52 +13,27 @@ def main():
         pygame.display.update()
         pygame.time.wait(250)
         passive_stone = board.get_square()
-        print(passive_stone)
-        if passive_stone == board.get_square():
+        board.highlight(passive_stone[2])
+        passive_stone_move = board.get_square()
+        if passive_stone == passive_stone_move:
+            board.unhighlight(passive_stone[2])
+            continue
+        board.highlight(passive_stone_move[2])
+        aggro_stone = board.get_square()
+        if aggro_stone == passive_stone_move or aggro_stone == passive_stone:
+            board.unhighlight(passive_stone[2])
+            board.unhighlight(passive_stone_move[2])
+            continue
+        board.highlight(aggro_stone[2])
+        if passive_stone != None:
+            #add board history 
+            board.update_board(board.player, passive_stone[0], passive_stone_move[0], aggro_stone[0])
             board.clear()
             board.draw()
-        passive_stone_move = board.get_square()
-        print(passive_stone_move)
-        aggro_stone = board.get_square()
-        print(aggro_stone)
-        if passive_stone != None:
-            board.passive_aggressive(board.player, passive_stone[0], passive_stone_move[0], aggro_stone[0])
-            board.clear()
-            board.draw() #should be update here
+            board.player = 'w' if board.player == 'b' else 'b'
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
-            # if event.type == pygame.MOUSEBUTTONUP:
-            #     if event.button == 1:
-            #         for region in board.regions:
-            #             for square in region.map:
-            #                 while board.holding_stone[0] == False:
-            #                 if square.collidepoint(event.pos):
-            #                     #if board square and has stone then holding stone = true
-            #                     if board.holding_stone[0] == False and region.stones[region.map.index(square)] == board.player:
-            #                         print("space", region.region_number, region.map.index(square))
-            #                         stone_color = region.stones[region.map.index(square)]
-            #                         rowi = region.map.index(square) // 4
-            #                         coli = region.map.index(square) % 4
-            #                         initial = (region.region_number, rowi, coli)
-            #                         board.holding_stone = [True, initial]
-            #                         region.stones[region.map.index(square)] = ' '
-
-            #                     elif board.holding_stone[0] == True:
-            #                         board.holding_stone[0] = False
-            #                         rowf = region.map.index(square) // 4
-            #                         colf = region.map.index(square) % 4
-            #                         final = (region.region_number, rowf, colf)
-            #                         print("ass", region.stones[rowi*4+coli], "blaster")
-            #                         if board.passive_move(board.player, stone_color, initial, final):
-            #                             print('it worked!')
-            #                             region.stones[region.map.index(square)] = board.player
-            #                             board.holding_stone[1] = ' '
-            #                             board.clear()
-            #                             board.draw() #should be update here
-            #                     break                
-
-
+                exit()              
 
 if __name__ == '__main__':
     pygame.init()
