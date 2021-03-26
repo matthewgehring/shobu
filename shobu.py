@@ -13,6 +13,9 @@ def main():
         pygame.time.wait(250)
         passive_stone = board.get_square()
         print(passive_stone)
+        if passive_stone == board.get_square():
+            board.clear()
+            board.draw()
         passive_stone_move = board.get_square()
         print(passive_stone_move)
         aggro_stone = board.get_square()

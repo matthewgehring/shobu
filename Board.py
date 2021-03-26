@@ -62,7 +62,7 @@ class Board:
                         for region in self.regions:
                             for square in region.map:
                                 if square.collidepoint(event.pos):
-                                    #self.highlight(square)
+                                    self.highlight(square)
                                     reg_num = region.region_number
                                     index = region.map.index(square)
                                     stone_color = region.stones[index]
