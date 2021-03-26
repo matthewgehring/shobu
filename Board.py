@@ -38,11 +38,11 @@ class Board:
         self.screen.blit(self.background, (0, 0))
 
     def highlight(self, square):
-        pygame.draw.rect(self.screen, (50, 205, 50), square, 4)
+        pygame.draw.rect(self.screen, (50, 205, 50), square, 2)
         pygame.display.update()
     
     def unhighlight(self, square):
-        pygame.draw.rect(self.screen, (0, 0, 0), square, 4)
+        pygame.draw.rect(self.screen, (0, 0, 0), square, 2)
         pygame.display.update()
 
     def get_square(self):
@@ -52,6 +52,7 @@ class Board:
         col = None
         index = None
         stone_color = None
+        current_square = None
         while finished == False:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -61,13 +62,14 @@ class Board:
                         for region in self.regions:
                             for square in region.map:
                                 if square.collidepoint(event.pos):
+                                    current_square = square
                                     reg_num = region.region_number
                                     index = region.map.index(square)
                                     row = index // 4
                                     col = index % 4
                                     stone_color = region.stones[row][col]
                                     finished = True
-        return (reg_num, row, col), stone_color
+        return (reg_num, row, col), stone_color, current_square
 
     def obtain_board_pos(self, stone):
         if stone[1] not in [0,1,2,3] or stone[2] not in [0,1,2,3]:      #checks if position is out of bounds and returns ' '
