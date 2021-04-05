@@ -1,7 +1,6 @@
 import pygame
 import numpy as np
 from Region import Region
-#TODO: set up highlight function
 
 unit_vectors=np.array([[0,1, 0], [0,0, 1], [0,1, 1], [0,1,-1], [0,-1,1], [0,-1, 0], [0,0, -1], [0,-1, -1]])         #defines the legal vectors for stone movement up to two spaces
 viable_vectors=np.concatenate((unit_vectors,unit_vectors*2))
@@ -23,6 +22,10 @@ class Board:
         self.board = [self.region0.stones, self.region1.stones, self.region2.stones, self.region3.stones]
         self.draw()
 
+    def arrow(self, passive_stone, passive_stone_move):
+        pygame.draw.line(self.screen, (50, 205, 50), (((passive_stone[0]*2)+60)/2, ((passive_stone[1]*2)+60)/2), (((passive_stone_move[0]*2)+60)/2, ((passive_stone_move[1]*2)+60)/2), 2) 
+        pygame.display.update()
+
     def draw(self):
         pygame.draw.rect(self.background,  (0,0, 0), self.outline, 3)
         self.screen.blit(self.background, (0, 0))
@@ -38,6 +41,7 @@ class Board:
         self.screen.blit(self.background, (0, 0))
 
     def highlight(self, square):
+        print(square)
         pygame.draw.rect(self.screen, (50, 205, 50), square, 2)
         pygame.display.update()
     
@@ -105,6 +109,12 @@ class Board:
 
     def get_vector(self, stone_coordinate,move_coordinate):
         return (0,move_coordinate[1] - stone_coordinate[1], move_coordinate[2] - stone_coordinate[2])
+
+    def legal_move(self, color, stone_coordinate, move_coordinate, vector):
+        if color == "b":
+            homeboard = ('0', '1')
+        if color == "w":
+            homeboard = ('2', '3')
 
     def passive_move(self, color,stone_coordinate,move_coordinate, vector):
 
