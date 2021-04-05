@@ -24,6 +24,10 @@ class Board:
         self.board = [self.region0.stones, self.region1.stones, self.region2.stones, self.region3.stones]
         self.draw()
 
+    def arrow(self, passive_stone, passive_stone_move):
+        pygame.draw.line(self.screen, (50, 205, 50), (((passive_stone[0]*2)+60)/2, ((passive_stone[1]*2)+60)/2), (((passive_stone_move[0]*2)+60)/2, ((passive_stone_move[1]*2)+60)/2), 2) 
+        pygame.display.update()
+
     def draw(self):
         pygame.draw.rect(self.background, (0, 0, 0), self.outline, 3)
         self.screen.blit(self.background, (0, 0))
@@ -39,6 +43,7 @@ class Board:
         self.screen.blit(self.background, (0, 0))
 
     def highlight(self, square):
+        print(square)
         pygame.draw.rect(self.screen, (50, 205, 50), square, 2)
         pygame.display.update()
 
