@@ -110,12 +110,6 @@ class Board:
     def get_vector(self, stone_coordinate,move_coordinate):
         return (0,move_coordinate[1] - stone_coordinate[1], move_coordinate[2] - stone_coordinate[2])
 
-    def legal_move(self, color, stone_coordinate, move_coordinate, vector):
-        if color == "b":
-            homeboard = ('0', '1')
-        if color == "w":
-            homeboard = ('2', '3')
-
     def passive_move(self, color,stone_coordinate,move_coordinate, vector):
 
         if color == "b":
