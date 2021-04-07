@@ -14,7 +14,9 @@ def main():
         pygame.time.wait(250)
         passive_stone = board.get_square()
         board.highlight(passive_stone[2])
+        print(passive_stone[2])
         passive_stone_move = board.get_square()
+        board.arrow(passive_stone[2], passive_stone_move[2])
         if passive_stone == passive_stone_move:
             board.unhighlight(passive_stone[2])
             continue
