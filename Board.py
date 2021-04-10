@@ -10,7 +10,6 @@ unit_vectors=np.array([[0,1, 0], [0,0, 1], [0,1, 1], [0,1,-1], [0,-1,1], [0,-1, 
 viable_vectors=np.concatenate((unit_vectors,unit_vectors*2))
 
 
-
 class Board:
     def __init__(self, bg, screen):
         self.player = 'b'
