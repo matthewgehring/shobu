@@ -1,22 +1,14 @@
 import pygame
 import numpy as np
 from Region import Region
-<<<<<<< HEAD
-import Rules
-#TODO: set up highlight function
-=======
->>>>>>> 93a0a61d06bb9a4a86b10b7340322f92c2007db4
 
 # TODO: set up highlight function
 
-<<<<<<< HEAD
-=======
 unit_vectors = np.array([[0, 1, 0], [0, 0, 1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, 0], [0, 0, -1],
                          [0, -1, -1]])  # defines the legal vectors for stone movement up to two spaces
 viable_vectors = np.concatenate((unit_vectors, unit_vectors * 2))
 
 
->>>>>>> 93a0a61d06bb9a4a86b10b7340322f92c2007db4
 class Board:
     def __init__(self, bg, screen):
         self.player = 'b'
