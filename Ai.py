@@ -1,6 +1,16 @@
 import numpy as np
 from Rules import Rules
+from Board import Board
 import sys, os
+
+#Table to show to points awarded based on position, stones near the center are higher value.
+#Used in evaluate method
+    board_points = numpy.array([
+        [0,0,0,0],
+        [0,.1,.1,0],
+        [0,.1,.1,0],
+        [0,0,0,0]
+    ])
 
 def blockPrint():           # Disable printing
     sys.stdout = open(os.devnull, 'w')
@@ -83,3 +93,82 @@ print(('number of valid passive moves: ' + str(len(all_passive_moves))))
 print('cases tested: ' + str(passive_cases))
 print('number of total possible moves: ' + str(len(all_possible_moves)))
 print('cases tested: ' + str(aggro_cases))
+
+
+class Static:
+    #Evaluates the static material value of each board
+    def evaluate(board):
+        material = Static.get_piece_position_score(board, stone[1], board_points)
+        return material 
+    #Evaluates the the piece position based score taking in the board, stone color of the piece and the constant table which will be board points at the beginning.
+    def get_piece_position_score(board, stone_color, table):
+        white = 0
+        black = 0
+        for region in self.regions: #Maps the regions and goes through each square to evaluate the color
+            for square in region.map:
+                stone_color = region.stones[index]
+                if (stone_color != ''):
+                    if (stone_color == 'w'):
+                        white += 1
+                    else:
+                        black += 1
+
+        return white - black #returns the total material score less is good for black and more is good for white
+class AI:
+
+    INFINITE = 10000000 
+
+        def get_ai_move(color, board):
+        best_move = 0
+        best_score = AI.INFINITE
+        for stone in find_my_stones(color, board): #3 for loops to test each stone / passive_move / aggressive_move
+            for passive_move in potential_passive_moves(color, stone):
+                 if potential_passive_moves(color, stone)[0] != []: #once we remove cases tested we won't need [0]
+                    continue   
+                for aggro_move in potential_aggressive_moves(color, passive_move, stone)
+                    copy = np.copy(self.board)
+                    copy.update_state(color, stone, passive_move, aggro_move[2]) #Updates the cloned board with the new move
+
+                    score = AI.alphabeta(copy, 2, -AI.INFINITE, AI.INFINITE, True) #Find's the score for a particular move, need to add more ways to affect the score this is just material and position based 
+                    if (score < best_score):
+                        best_score = score
+                        best_move = [stone, passive_move, aggro_move[2]]
+
+                # no possible best move
+                if (best_move == []):
+                    return 0
+
+                copy = np.copy(self.board)
+                copy.update_state(color, best_move[0], best_move[1], best_move[2])
+                return best_move
+
+def alphabeta(board, depth, a, b, maximizing): #Maximizing is either True for white or False for Black. Depends on depth too
+        if (depth == 0):
+            return Static.evaluate(board)
+
+        if (maximizing):
+            best_score = -AI.INFINITE
+            for stone in find_my_stones('w', board): #Finds best score for white cuts off any branches where black would get a good move
+                for passive_move in potential_passive_moves(color, stone):
+                    for aggro_move in potential_aggressive_moves(color, passive_move, stone)
+                        copy = np.copy(self.board)
+                        copy.update_state(color, stone, passive_move, aggro_move[2])
+
+                        best_score = max(best_score, AI.alphabeta(copy, depth-1, a, b, False))
+                        a = max(a, best_score)
+                        if (b <= a):
+                            break
+            return best_score
+        else:
+            best_score = AI.INFINITE
+            for stone in find_my_stones('b', board): #Finds best score for black, cuts off any branches where white would get a good move
+                for passive_move in potential_passive_moves(color, stone):
+                    for aggro_move in potential_aggressive_moves(color, passive_move, stone)
+                        copy = np.copy(self.board)
+                        copy.update_state(color, stone, passive_move, aggro_move[2])
+
+                        best_score = min(best_score, AI.alphabeta(copy, depth-1, a, b, True))
+                        b = min(b, best_score)
+                        if (b <= a):
+                            break
+            return best_score
