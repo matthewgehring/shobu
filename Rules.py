@@ -6,9 +6,13 @@ unit_vectors = np.array([[0, 1, 0], [0, 0, 1], [0, 1, 1], [0, 1, -1], [0, -1, 1]
 viable_vectors = np.concatenate((unit_vectors, unit_vectors * 2))
 
 class Rules(object):
-    def __init__(self, board):
+    def __init__(self, board, errors):
         self.board = board
-        
+        self.errors = errors 
+    
+    def toggle_errors(self):
+        self.errors = not self.errors
+
     def obtain_board_pos(self, stone):
         if stone[1] not in [0, 1, 2, 3] or stone[2] not in [0, 1, 2,
                                                             3]:  # checks if position is out of bounds and returns ' '
@@ -56,24 +60,30 @@ class Rules(object):
             homeboard = ('2', '3')
 
         if str(stone_coordinate[0]) not in homeboard:  # checks if passive move is on homeboard
-            print("Error: Board selected is not a homeboard")
+            if self.errors: 
+                print("Error: Board selected is not a homeboard")
             legal_state = False
 
         if self.obtain_board_pos(stone_coordinate) != color:  # checks if you're selecting your own stone
-            print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate))
+            if self.errors: 
+                print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate))
             legal_state = False
 
         if stone_coordinate[0] != move_coordinate[0]:
-            print("Error: Stone coordinate and Move coordinate not on same board")
+            if self.errors: 
+                print("Error: Stone coordinate and Move coordinate not on same board")
             legal_state = False
 
         if not (vector == viable_vectors).all(1).any():  # checks if stone movement is legal
-            print('Error: Movement not orthogonally or diagonally adjacent with a scale up to two.')
+            if self.errors: 
+                print('Error: Movement not orthogonally or diagonally adjacent with a scale up to two.')
             legal_state = False
 
         if self.check_if_pushes(self.board, stone_coordinate, vector):
-            print(self.board, stone_coordinate, vector)
-            print("Error: Cannot push a stone on a passive move.")
+            if self.errors: 
+                print(self.board, stone_coordinate, vector)
+            if self.errors: 
+                print("Error: Cannot push a stone on a passive move.")
             legal_state = False
 
         return legal_state
@@ -83,38 +93,44 @@ class Rules(object):
         move_position = np.array(stone_coordinate) + np.array(vector)
         legal_state = True
         if move_position[1] not in [0, 1, 2, 3] or move_position[2] not in [0, 1, 2, 3]:
-            print('Error: Aggressive move out of 4x4 bounds')
+            if self.errors: 
+                print('Error: Aggressive move out of 4x4 bounds')
             legal_state = False
 
         if self.obtain_board_pos(stone_coordinate) != color:  # checks if you're selecting your own stone
-            print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate) + '  (aggressive move)')
+            if self.errors: 
+                print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate) + '  (aggressive move)')
             legal_state = False
 
         if stone_coordinate[0] % 2 == passive_board % 2:
-            print(
+            if self.errors: 
+                print(
                 'error: stone must be played on opposite colored board as your passive move')  # must play on boards of opposite parity
             legal_state = False
 
         if self.board[stone_coordinate[0]][stone_coordinate[1]][
             stone_coordinate[2]] != color:  # checks if you're selecting your own stone
-            print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate))
+            if self.errors: 
+                print("Error: no '" + str(color) + "' stone at " + str(stone_coordinate))
             legal_state = False
 
         if self.obtain_board_pos(move_position) == color or self.obtain_board_pos(
                 np.array(stone_coordinate) + np.array(unit_vector)) == color:
-            print(
-                'Error: Cannot push your own stones')  # if vector length = 2, checks both spots. if length = 1, only checks destination
+            if self.errors: 
+                print('Error: Cannot push your own stones')  # if vector length = 2, checks both spots. if length = 1, only checks destination
             legal_state = False
 
         if self.obtain_board_pos(move_position) == opponent and (
                 self.obtain_board_pos(move_position + unit_vector) != ' ' or self.obtain_board_pos(
                 move_position - unit_vector) == opponent):
-            print('Error: Cannot push more than one stone (Case 1)')
+            if self.errors: 
+                print('Error: Cannot push more than one stone (Case 1)')
             legal_state = False  # if moved onto opponent stone, checks if there is an opponent stone 1 unit ahead or behind of stone
 
         if self.obtain_board_pos(move_position) == ' ' and self.obtain_board_pos(
                 move_position - unit_vector) == opponent and self.obtain_board_pos(move_position + unit_vector) != ' ':
-            print('Error: Cannot push more than one stone (Case 2)')
+            if self.errors: 
+                print('Error: Cannot push more than one stone (Case 2)')
             legal_state = False  # if moved onto empty space, checks if there is an opponent stone both 1 unit behind and ahead of stone
 
         return legal_state
@@ -141,7 +157,8 @@ class Rules(object):
         updated_board = np.copy(self.board)
         opponent = 'b' if color == 'w' else 'w'
         vector = self.get_vector(init_stone, init_move)
-        print('vector: ' + str(vector))
+        if self.errors: 
+            print('vector: ' + str(vector))
         unit_vector = np.array(self.generate_unit_vector(vector))
         sub_board = init_stone[0]
         legal = self.passive_aggressive(color, init_stone, init_move, aggro_stone, vector, unit_vector, opponent,
@@ -155,22 +172,27 @@ class Rules(object):
             if self.obtain_board_pos(aggressive_moved) == opponent:
                 out_of_bounds = self.update_board_pos(aggressive_moved + unit_vector, opponent, updated_board)
                 if out_of_bounds == True:
-                    print(opponent + ' stone removed from the board')
+                    if self.errors: 
+                        print(opponent + ' stone removed from the board')
                 else:
-                    print(opponent + ' stone pushed from ' + str(aggressive_moved) + ' to ' + str(
+                    if self.errors: 
+                        print(opponent + ' stone pushed from ' + str(aggressive_moved) + ' to ' + str(
                         aggressive_moved + unit_vector))
             if self.obtain_board_pos(aggressive_moved) == ' ' and self.obtain_board_pos(
                     aggressive_moved - unit_vector) == opponent:
                 self.update_board_pos(aggressive_moved - unit_vector, ' ', updated_board)
                 out_of_bounds = self.update_board_pos(aggressive_moved + unit_vector, opponent, updated_board)
                 if out_of_bounds == True:
-                    print(opponent + ' stone removed from the board')
+                    if self.errors: 
+                        print(opponent + ' stone removed from the board')
                 else:
-                    print(opponent + ' stone pushed from ' + str(aggressive_moved) + ' to ' + str(
+                    if self.errors: 
+                        print(opponent + ' stone pushed from ' + str(aggressive_moved) + ' to ' + str(
                         aggressive_moved + unit_vector))
             # board_history+=updated_board
             board_history.append(updated_board)
         else:
-            print('illegal move')
+            if self.errors: 
+                print('illegal move')
 
         return updated_board #, board_history
