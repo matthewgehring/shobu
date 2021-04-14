@@ -10,8 +10,8 @@ class Rules(object):
         self.board = board
         self.errors = errors 
     
-    def toggle_errors(self):
-        self.errors = not self.errors
+    def set_errors(self, value):
+        self.errors = value
 
     def obtain_board_pos(self, stone):
         if stone[1] not in [0, 1, 2, 3] or stone[2] not in [0, 1, 2,
