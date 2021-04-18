@@ -1,14 +1,13 @@
 import numpy as np
 import sys
-
 unit_vectors = np.array([[0, 1, 0], [0, 0, 1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, 0], [0, 0, -1],
-                         [0, -1, -1]])  # defines the legal vectors for stone movement up to two spaces
+                                 [0, -1, -1]])  # defines the legal vectors for stone movement up to two spaces
 viable_vectors = np.concatenate((unit_vectors, unit_vectors * 2))
 
 class Rules(object):
     def __init__(self, board):
         self.board = board
-        
+
     def obtain_board_pos(self, stone):
         if stone[1] not in [0, 1, 2, 3] or stone[2] not in [0, 1, 2,
                                                             3]:  # checks if position is out of bounds and returns ' '
@@ -38,6 +37,9 @@ class Rules(object):
 
     def check_if_pushes(self, board, stone,
                         vector):  # checks if there is a stone in the vector path of the aggressive move
+        if [stone[1] + vector[1] not in [0, 1, 2, 3] or stone[2] + vector[2]] not in [0, 1, 2,
+                                                            3]:  # checks if position is out of bounds and returns ' '
+            return False
         if board[stone[0]][stone[1] + vector[1]][stone[2] + vector[2]] != ' ' or (
                 2 in vector and board[stone[0]][stone[1] + int(round(vector[1] / 2 + 0.5))][
             stone[2] + int(round(vector[2] / 2 + 0.5))] != ' '):
@@ -48,12 +50,16 @@ class Rules(object):
     def get_vector(self, stone_coordinate, move_coordinate):
         return (0, move_coordinate[1] - stone_coordinate[1], move_coordinate[2] - stone_coordinate[2])
 
-    def passive_move(self, color, stone_coordinate, move_coordinate, vector):
-        legal_state = True
+    def initialize_homeboard(self,color):
         if color == "b":
             homeboard = ('0', '1')
         if color == "w":
             homeboard = ('2', '3')
+        return homeboard
+
+    def passive_move(self, color, stone_coordinate, move_coordinate, vector):
+        legal_state = True
+        homeboard=self.initialize_homeboard('b')
 
         if str(stone_coordinate[0]) not in homeboard:  # checks if passive move is on homeboard
             print("Error: Board selected is not a homeboard")
