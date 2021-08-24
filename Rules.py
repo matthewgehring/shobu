@@ -7,6 +7,7 @@ viable_vectors = np.concatenate((unit_vectors, unit_vectors * 2))
 class Rules(object):
     def __init__(self, board, errors):
         self.board = board
+<<<<<<< Updated upstream
  update_rules
 
         self.errors = errors 
@@ -14,6 +15,8 @@ class Rules(object):
     def set_errors(self, value):
         self.errors = value
  master
+=======
+>>>>>>> Stashed changes
 
     def obtain_board_pos(self, stone):
         if stone[1] not in [0, 1, 2, 3] or stone[2] not in [0, 1, 2,
@@ -63,11 +66,18 @@ class Rules(object):
         if color == "w":
             homeboard = ('2', '3')
         return homeboard
+<<<<<<< Updated upstream
 
     def passive_move(self, color, stone_coordinate, move_coordinate, vector):
         legal_state = True
         homeboard=self.initialize_homeboard('b')
+=======
+>>>>>>> Stashed changes
 
+    def passive_move(self, color, stone_coordinate, move_coordinate, vector):
+        legal_state = True
+        homeboard=self.initialize_homeboard(color)
+        unit_vector = self.generate_unit_vector(vector)
         if str(stone_coordinate[0]) not in homeboard:  # checks if passive move is on homeboard
             if self.errors: 
                 print("Error: Board selected is not a homeboard")
@@ -95,15 +105,26 @@ class Rules(object):
                 print("Error: Cannot push a stone on a passive move.")
             legal_state = False
 
+        if self.obtain_board_pos(move_coordinate) == color or self.obtain_board_pos(
+                np.array(stone_coordinate) + np.array(unit_vector)) == color:
+            print('Error: Cannot push your own stones')  # if vector length = 2, checks both spots. if length = 1, only checks destination
+            legal_state = False
+
         return legal_state
 
     def aggressive_move(self, color, opponent, passive_board, stone_coordinate, vector, unit_vector):
 
         move_position = np.array(stone_coordinate) + np.array(vector)
         legal_state = True
+<<<<<<< Updated upstream
         if move_position[1] not in [0, 1, 2, 3] or move_position[2] not in [0, 1, 2, 3]:
             if self.errors: 
                 print('Error: Aggressive move out of 4x4 bounds')
+=======
+       # if move_position[1] not in [0, 1, 2, 3] or move_position[2] not in [0, 1, 2, 3]:
+        if bool(set((-2, -1, 4, 5)) & set(move_position)):
+            print('Error: Aggressive move out of 4x4 bounds')
+>>>>>>> Stashed changes
             legal_state = False
 
         if self.obtain_board_pos(stone_coordinate) != color:  # checks if you're selecting your own stone
@@ -125,8 +146,12 @@ class Rules(object):
 
         if self.obtain_board_pos(move_position) == color or self.obtain_board_pos(
                 np.array(stone_coordinate) + np.array(unit_vector)) == color:
+<<<<<<< Updated upstream
             if self.errors: 
                 print('Error: Cannot push your own stones')  # if vector length = 2, checks both spots. if length = 1, only checks destination
+=======
+            print('Error: Cannot push your own stones')  # if vector length = 2, checks both spots. if length = 1, only checks destination
+>>>>>>> Stashed changes
             legal_state = False
 
         if self.obtain_board_pos(move_position) == opponent and (
@@ -166,8 +191,12 @@ class Rules(object):
         updated_board = np.copy(self.board)
         opponent = 'b' if color == 'w' else 'w'
         vector = self.get_vector(init_stone, init_move)
+<<<<<<< Updated upstream
         if self.errors: 
             print('vector: ' + str(vector))
+=======
+        #print('vector: ' + str(vector))
+>>>>>>> Stashed changes
         unit_vector = np.array(self.generate_unit_vector(vector))
         sub_board = init_stone[0]
         legal = self.passive_aggressive(color, init_stone, init_move, aggro_stone, vector, unit_vector, opponent,

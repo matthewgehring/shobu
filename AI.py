@@ -1,5 +1,6 @@
 import numpy as np
 from Rules import Rules
+<<<<<<< Updated upstream
 from Board import Board
 import sys, os
 
@@ -12,6 +13,10 @@ import sys, os
         [0,0,0,0]
     ])
 
+=======
+import sys, os
+import time
+>>>>>>> Stashed changes
 def blockPrint():           # Disable printing
     sys.stdout = open(os.devnull, 'w')
 
@@ -25,7 +30,11 @@ unit_vectors = np.array([[0, 1, 0], [0, 0, 1], [0, 1, 1], [0, 1, -1], [0, -1, 1]
 viable_vectors = np.concatenate((unit_vectors, unit_vectors * 2))
 Board=Rules(board)
 
+<<<<<<< Updated upstream
 def find_my_stones(color,board):
+=======
+def find_my_stones(color, board):
+>>>>>>> Stashed changes
     my_stones =[]
     for i in range(0, 4):
         for j in range(0,4):
@@ -46,9 +55,16 @@ def potential_passive_moves(color,my_stones):           # returns passive moves 
     for i in range(len(passive_stones)):
         for j in range((len(viable_vectors))):
             cases_tested+=1
+<<<<<<< Updated upstream
             if any((-2,-1,4,5)) not in (passive_stones[i]+viable_vectors[j]):
                 stone_coordinate=passive_stones[i]
                 move_coordinate=np.array(passive_stones[i]+viable_vectors[j]).tolist()
+=======
+            #if not any((-2, -1, 4, 5)) in (passive_stones[i]+viable_vectors[j]):
+            if not bool(set((-2, -1, 4, 5)) & set(passive_stones[i]+viable_vectors[j])):
+                stone_coordinate = passive_stones[i]
+                move_coordinate = np.array(passive_stones[i]+viable_vectors[j]).tolist()
+>>>>>>> Stashed changes
                 vector = Board.get_vector(stone_coordinate,move_coordinate)
                 if Board.passive_move(color,stone_coordinate,move_coordinate,vector):
                     passive_moves.append((stone_coordinate,move_coordinate,vector))
@@ -57,14 +73,19 @@ def potential_passive_moves(color,my_stones):           # returns passive moves 
 
 def potential_aggressive_moves(color,passive_moves,my_stones):
     aggressive_moves=[]
+<<<<<<< Updated upstream
     aggrostones=[]
     cases_tested=1
+=======
+    cases_tested=0
+>>>>>>> Stashed changes
     opponent = 'b' if color == 'w' else 'w'
     blockPrint()
     for i in range(len(passive_moves)):
         aggrostones=my_stones.copy()
         unit_vector = Board.generate_unit_vector(passive_moves[i][2])
         aggroboards = [0, 2] if passive_moves[i][0][0] in [1, 3] else [1, 3]
+<<<<<<< Updated upstream
         for i in range(len(my_stones)):                     # filters out stones not on aggressive boards to be tested
             if (my_stones[i][0]) not in aggroboards:
                 aggrostones.remove(my_stones[i])
@@ -72,6 +93,15 @@ def potential_aggressive_moves(color,passive_moves,my_stones):
             cases_tested+=1
             if Board.aggressive_move(color,opponent,passive_moves[i][0][0],aggrostones[i],passive_moves[i][2],unit_vector):
                 aggressive_moves.append((passive_moves[i][0],passive_moves[i][1],aggrostones[i]))
+=======
+        for j in range(len(my_stones)):                     # filters out stones not on aggressive boards to be tested
+            if (my_stones[j][0]) not in aggroboards:
+                aggrostones.remove(my_stones[j])
+        for j in range(len(aggrostones)):
+            cases_tested+=1
+            if Board.aggressive_move(color,opponent,passive_moves[i][0][0],aggrostones[j],passive_moves[i][2],unit_vector):
+                aggressive_moves.append((passive_moves[i][0],passive_moves[i][1],aggrostones[j]))
+>>>>>>> Stashed changes
     enablePrint()
     return aggressive_moves, cases_tested
 
@@ -86,6 +116,48 @@ def find_all_moves(color,board):
     all_possible_moves, aggro_cases_tested = potential_aggressive_moves(color, all_passive_moves, my_stones)
     return all_possible_moves, all_passive_moves,my_stones, passive_cases_tested, aggro_cases_tested
 
+<<<<<<< Updated upstream
+=======
+#board evaluation functions
+def check_if_alive(color,board):
+    living_boards=0
+    for i in range(0, 4):
+        if color in board[i]:
+            living_boards+=1
+    return living_boards==4
+
+def check_who_won(board):
+    if not check_if_alive('b',board):
+        return 'w'
+    if not check_if_alive('w',board):
+        return 'b'
+    else:
+        return None
+
+def evaluate_board(color,board):
+    opponent = 'b' if color == 'w' else 'w'
+    all_possible_moves, all_passive_moves, my_stones, passive_cases, aggro_cases=find_all_moves(color,board)
+    high_score=0
+    blockPrint()
+    for i in range(len(all_possible_moves)):
+        current_move=all_possible_moves[i]
+        blockPrint()
+        board_iter=Board.update_board(color,current_move[0],current_move[1],current_move[2])
+        if check_who_won(board_iter)==color:
+            best_move=current_move
+            high_score=1000
+        else:
+            op_possible_moves, all_passive_moves, op_stones, passive_cases, aggro_cases= find_all_moves(opponent, board_iter)      #counts opponents moves
+            score=1000-len(op_stones)*20-len(op_possible_moves)*2
+
+            if score>high_score:
+                high_score=score
+                best_move=current_move
+    enablePrint()
+    return best_move, high_score
+
+
+>>>>>>> Stashed changes
 all_possible_moves, all_passive_moves,my_stones, passive_cases, aggro_cases=find_all_moves('b',board)
 
 print('number of my stones on the board: ' +  str(len(my_stones)))
@@ -95,6 +167,7 @@ print('number of total possible moves: ' + str(len(all_possible_moves)))
 print('cases tested: ' + str(aggro_cases))
 
 
+<<<<<<< Updated upstream
 class Static:
     #Evaluates the static material value of each board
     def evaluate(board):
@@ -172,3 +245,25 @@ def alphabeta(board, depth, a, b, maximizing): #Maximizing is either True for wh
                         if (b <= a):
                             break
             return best_score
+=======
+# pt = time.time()
+# best_move, high_score = evaluate_board('b',board)
+# print(best_move, high_score)
+# ct =time.time()
+# print(ct-pt)
+# best_move, high_score = evaluate_board('w',Board.update_board('b',best_move[0],best_move[1],best_move[2]))
+# print(best_move, high_score)
+# print(time.time() -ct)
+
+def bot_vs_bot(color,board):
+    Board = Rules(board)
+    print(board)
+    opponent = 'b' if color == 'w' else 'w'
+    pt = time.time()
+    best_move, high_score = evaluate_board(color, board)
+    print(best_move, high_score)
+    print(time.time() - pt)
+    board_update=Board.update_board(color,best_move[0],best_move[1],best_move[2])
+    bot_vs_bot(opponent,board_update)
+bot_vs_bot('b',board)
+>>>>>>> Stashed changes
