@@ -83,6 +83,8 @@ class Rules(object):
 
     def check_if_pushes(self,input1,input2,color):          #checks if a stone is being pushed, returns the location of the stone being pushed
         move = input2 - input1
+        # print(board)
+        # print(board[input2])
         if move in self.two_space_moves:
             if (board[int(input1+move/2)] != 'x' and board[input2]=='x'):
                 return input1+move/2    #if stone moves past another stone, returns location of the stone being jumped over
@@ -157,15 +159,19 @@ class Rules(object):
         move = input2 % 16 - input1 % 16
         halfmove = move
 
+
         if not self.passive_aggressive(input1,input2,input3,color):     #verifies the move is legal
             return False
 
+        print(board)
         updated_board[input1] = 'x'
         updated_board[input2] = color
         updated_board[input3] = 'x'
         updated_board[input3 + move] = color
-
+        print(board)
+        
         pushed_stone = self.check_if_pushes(input3, input3 + move, color)
+        print(pushed_stone)
         if pushed_stone != 'x':
             pushed_stone=int(pushed_stone)
             pushed_stone = int(pushed_stone)
@@ -195,3 +201,5 @@ try:
     print(convert_to_string(updated_board))
 except TypeError:
     pass
+
+#print(game.board)
