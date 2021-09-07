@@ -15,7 +15,7 @@
 #   'b' is a black stone, 'w' is a white stone, 'x' is an empty space. x is a placeholder, it looks really ugly as a space.
 board = 'bbbb' \
         'xxxx' \
-        'xxxx' \
+        'bbxx' \
         'wwww' \
     \
         'bbbb' \
@@ -36,8 +36,8 @@ board = list(board)
 class Rules(object):
     def __init__(self, board):
         self.board = board
-        self.two_space_moves=(10,-10,8,-8,6,-6,4,-4)
-        self.one_space_moves=(5,-5,4,-4,3,-3,2,-2)
+        self.two_space_moves=(10,-10,8,-8,6,-6,2,-2)
+        self.one_space_moves=(5,-5,4,-4,3,-3,1,-1)
 
     def initialize_homeboard(self, color):
         if color == "b":
@@ -75,7 +75,6 @@ class Rules(object):
             return False
 
         if (invertboard[input1 % 16]+ invertmoves[move]) % 16 > invertboard[input2 % 16]:
-            print('check 5')
             return False
 
         else:
@@ -83,6 +82,7 @@ class Rules(object):
 
     def check_if_pushes(self,input1,input2,color):          #checks if a stone is being pushed, returns the location of the stone being pushed
         move = input2 - input1
+        opponent = 'b' if color == 'w' else 'w'
         if move in self.two_space_moves:
             if (board[int(input1+move/2)] != 'x' and board[input2]=='x'):
                 return input1+move/2    #if stone moves past another stone, returns location of the stone being jumped over
@@ -90,12 +90,21 @@ class Rules(object):
             if board[int(input1 + move / 2)] == 'x' and board[input2] != 'x':
                 return input2           # if stone moves onto other stone, returns location of stone being moved onto
 
+            if board[input2] !='x' and  not self.check_if_valid(input2,int(input2+move) / 2,opponent): #checks if pushed stone falls off board
+                return input2
+
             if (board[int(input1+move/2)] != 'x' and board[input2]!='x'):
                 return False            # if move both jumps over a stone and lands on a stone, returns false
 
         if move in self.one_space_moves:
             if board[input2] !='x' and board[input2 + move] == 'x': #checks if one space move lands on enemy stone
                 return input2
+
+            if board[input2] !='x' and  not self.check_if_valid(input2,input2+move,opponent):   #checks if pushed stone falls off board
+                return input2
+
+            if (board[(input2)] != 'x' and board[input2 + move]!='x'): #checks if pushes two stones in a row
+                return False
 
         return 'x'      #shows nothing has been pushed
 
@@ -110,6 +119,7 @@ class Rules(object):
             print('Error: Movement not orthogonally or diagonally adjacent with a scale up to two.')
             return False
         if self.check_if_pushes(input1,input2,color)!='x':  #checks if a stone is being pushed
+            print(self.check_if_pushes(input1,input2,color))
             print('cannot push a stone on your passive move')
             return False
         return True
@@ -156,7 +166,8 @@ class Rules(object):
         updated_board = list(board)
         move = input2 % 16 - input1 % 16
         halfmove = move
-
+        if move in self.two_space_moves:  # if move is 2 spaces, creates a 1 space move of same vector
+            halfmove = int(input1 + move / 2)
         if not self.passive_aggressive(input1,input2,input3,color):     #verifies the move is legal
             return False
 
@@ -167,13 +178,11 @@ class Rules(object):
 
         pushed_stone = self.check_if_pushes(input3, input3 + move, color)
         if pushed_stone != 'x':
-            pushed_stone=int(pushed_stone)
             pushed_stone = int(pushed_stone)
-            if move in self.two_space_moves:  #if move is 2 spaces, creates a 1 space move of same vector
-                move = int(input1 + move / 2)
-            if not self.check_if_valid(pushed_stone, int(input1 + move * 2), color): #checks if stone was pushed off board
+            if not self.check_if_valid(pushed_stone, int(input3 + halfmove * 2), opponent): #checks if stone was pushed off board
                 print('opponent ' + opponent + ' stone pushed off board from position ' + str(pushed_stone))
             else:
+
                 updated_board[input3 + move + halfmove] = opponent
         return updated_board
 
@@ -190,7 +199,7 @@ def convert_to_string(board): #converts the board back from a list into a string
 
 #testing
 game=Rules(list(board))
-updated_board=game.update_board(45,39,28,'w',board)
+updated_board=game.update_board(61,56,13,'w',board)
 try:
     print(convert_to_string(updated_board))
 except TypeError:
